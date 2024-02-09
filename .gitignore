@@ -7,3 +7,4 @@ embedder_model_files/
 model_store/
 config.properties
 *.log
+.env

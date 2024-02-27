@@ -1,5 +1,5 @@
 build-archive:
-	python dump_model.py
+	python dump_models.py
 	./scripts/create-archive.sh
 
 build-docker:

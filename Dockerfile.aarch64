@@ -1,9 +1,19 @@
 # Builder image
 FROM ghcr.io/alexgseymour/torch-serve-arm64:latest AS builder
 
+ARG ENCODER_MODEL_NAME_USER=intfloat
+ENV ENCODER_MODEL_NAME_USER=${ENCODER_MODEL_NAME_USER}
+ARG ENCODER_MODEL_NAME=all-MiniLM-L6-v2
+ENV ENCODER_MODEL_NAME=${ENCODER_MODEL_NAME}
+
+ARG CROSSENCODER_MODEL_NAME_USER=nreimers
+ENV CROSSENCODER_MODEL_NAME_USER=${CROSSENCODER_MODEL_NAME_USER}
+ARG CROSSENCODER_MODEL_NAME=mmarco-mMiniLMv2-L12-H384-v1
+ENV CROSSENCODER_MODEL_NAME=${CROSSENCODER_MODEL_NAME}
+
 WORKDIR /usr/app
 ADD requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install --cache-dir=/pip_cache/ -r requirements.txt
 
 ADD dump_models.py .
 RUN python dump_models.py
@@ -19,7 +29,7 @@ RUN ./scripts/create-archives.sh
 FROM ghcr.io/alexgseymour/torch-serve-arm64:latest
 
 ADD requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install --cache-dir=/pip_cache/ -r requirements.txt
 
 ADD docker/entrypoint.sh entrypoint.sh
 ADD scripts/start-torchserve.sh start-torchserve.sh
